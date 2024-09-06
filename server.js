@@ -1,19 +1,16 @@
-const express = require('express');
-const connectDB = require('./config/db');
-const errorHandler = require('./middleware/errorHandler');
+const express = require("express");
+const connectDB = require("./config/db");
+const routes = require("./routes");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-connectDB();
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/thoughts', require('./routes/thoughtRoutes'));
+app.use(routes);
 
-// Error handling middleware
-app.use(errorHandler);
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+connectDB.once("open", () => {
+  app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+  });
 });
